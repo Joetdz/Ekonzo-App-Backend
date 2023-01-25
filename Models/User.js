@@ -1,35 +1,32 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
-const uniqueValidator = require("mongoose-unique-validator");
-const carteShema = new Schema({
-  Numero: {
-    type: String,
-    unique: true,
-  },
-});
+const mongoose = require('mongoose')
+const Schema = mongoose.Schema
+const uniqueValidator = require('mongoose-unique-validator')
+
 const userSchema = new Schema(
   {
-    name: {
+    nom: {
       type: String,
     },
-    numero: {
+    prenom: {
+      type: String,
+    },
+
+    tel: {
       type: Number,
-      unique: true,
     },
     email: {
       type: String,
-      unique: true,
     },
     password: String,
     profil: String,
     promoCode: String,
-    cartes: [],
+    cards: [],
   },
 
   { timestamps: true }
-);
+)
 
-userSchema.plugin(uniqueValidator);
-const User = mongoose.model("user", userSchema);
+userSchema.plugin(uniqueValidator)
+const User = mongoose.model('user', userSchema)
 
-module.exports = { User };
+module.exports = { User }
