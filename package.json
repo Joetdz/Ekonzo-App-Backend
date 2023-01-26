@@ -9,7 +9,8 @@
     "start": "node App.js",
     "lint": "eslint --fix",
     "pretty": "prettier --write .",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "main":"App.js"
   },
   "repository": {
     "type": "git",
