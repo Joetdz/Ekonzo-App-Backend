@@ -12,6 +12,12 @@
     "prepare": "husky install",
     "main": "App.js"
   },
+  "lint-staged": {
+    "**/*.{js}": [
+    
+      
+    ]
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Joetdz/Ekonzo-App-Backend.git"
@@ -35,6 +41,6 @@
   "devDependencies": {
     "husky": "^8.0.0",
     "lint-staged": "^13.1.0",
-    "prettier": "^2.7.1"
+    "prettier": "^2.8.3"
   }
 }

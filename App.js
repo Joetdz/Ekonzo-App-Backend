@@ -5,7 +5,10 @@ const dotenv = require('dotenv')
 const mongoose = require('mongoose')
 const userRouter = require('./Routes/user.Route')
 dotenv.config()
-app.use(cors())
+const corsOption = {
+  origin: ['*'],
+}
+app.use(cors(corsOption))
 
 const port = process.env.PORT
 mongoose
