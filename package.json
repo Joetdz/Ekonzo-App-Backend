@@ -10,7 +10,7 @@
     "lint": "eslint --fix",
     "pretty": "prettier --write .",
     "prepare": "husky install",
-    "main":"App.js"
+    "main": "App.js"
   },
   "repository": {
     "type": "git",
@@ -33,6 +33,8 @@
     "nodemon": "^2.0.20"
   },
   "devDependencies": {
+    "husky": "^8.0.0",
+    "lint-staged": "^13.1.0",
     "prettier": "^2.7.1"
   }
 }
