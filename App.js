@@ -6,7 +6,7 @@ const mongoose = require('mongoose')
 const userRouter = require('./Routes/user.Route')
 dotenv.config()
 const corsOption = {
-  origin: ['*'],
+  origin: '*',
 }
 app.use(cors(corsOption))
 
