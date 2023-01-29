@@ -3,19 +3,6 @@
         "browser": true,
         "es2021": true
     },
-<<<<<<< HEAD
-    "extends": "airbnb-base",
-    "overrides": [
-    ],
-    "parserOptions": {
-        "ecmaVersion": "latest",
-        "sourceType": "module"
-    },
-    "rules": {
-        "semi": 0,
-        "comma-dangle": 0,
-        "prettier/prettier": "error"
-=======
     "extends": [
         "plugin:react/recommended",
         "airbnb"
@@ -34,6 +21,5 @@
       "semi": 0,
       "comma-dangle": 0,
       "prettier/prettier": "error"
->>>>>>> main
     }
 }

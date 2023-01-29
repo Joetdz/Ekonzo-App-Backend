@@ -13,10 +13,7 @@
     "main": "App.js"
   },
   "lint-staged": {
-    "**/*.{js}": [
-    
-      
-    ]
+    "**/*.{js}": []
   },
   "repository": {
     "type": "git",
