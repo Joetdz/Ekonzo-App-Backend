@@ -8,7 +8,7 @@ dotenv.config()
 const corsOption = {
   origin: '*',
 }
-app.use(cors(corsOption))
+app.use(cors())
 
 const port = process.env.PORT
 mongoose
