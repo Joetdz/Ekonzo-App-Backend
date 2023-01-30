@@ -8,7 +8,7 @@ dotenv.config()
 const corsOption = {
   origin: 'https://ekonzo-app-frontend-web.vercel.app',
 }
-app.use(cors())
+app.use(cors(corsOption))
 
 const port = process.env.PORT
 mongoose
