@@ -12,7 +12,7 @@ const userSchema = new Schema(
     },
 
     tel: {
-      type: Number,
+      type: String,
     },
     email: {
       type: String,
@@ -20,7 +20,6 @@ const userSchema = new Schema(
     password: String,
     profil: String,
     promoCode: String,
-    cards: [],
   },
 
   { timestamps: true }

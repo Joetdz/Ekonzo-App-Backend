@@ -25,7 +25,7 @@ const signUp = (req, res) => {
         user
           .save()
           .then((user) => {
-            console.log(`l'utilisateur ${user.name} est inscrit avec succès`)
+            console.log(`l'utilisateur ${user.prenom} est inscrit avec succès`)
             const playload = {
               id: user.id,
               name: user.name,
@@ -34,7 +34,7 @@ const signUp = (req, res) => {
             const token = jwt.encode(playload, config.jwtSecret)
             delete user.password
             res.status(200).json({
-              userId: user.id,
+              userId: user,
               token: `Bearer ${token}`,
             })
           })
@@ -47,8 +47,9 @@ const signUp = (req, res) => {
   })
 }
 const logIn = (req, res) => {
+  console.log(req.body)
   User.findOne({
-    $or: [{ email: req.body.email }, { numero: req.body.numero }],
+    tel: req.body.numero,
   })
     .then((user) => {
       if (!user) {

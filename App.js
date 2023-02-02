@@ -6,9 +6,9 @@ const mongoose = require('mongoose')
 const userRouter = require('./Routes/user.Route')
 dotenv.config()
 const corsOption = {
-  origin: 'https://ekonzo-app-frontend-web.vercel.app',
+  origin: '*',
 }
-app.use(cors(corsOption))
+app.use(cors())
 
 const port = process.env.PORT
 mongoose
