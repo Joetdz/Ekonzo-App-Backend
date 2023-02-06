@@ -5,15 +5,13 @@ const config = require('../Config/config')
 
 const signUp = (req, res) => {
   User.findOne({
-    $or: [{ email: req.body.email }, { tel: req.body.tel }],
+    tel: req.body.tel,
   }).then((user) => {
     if (user) {
       console.log(user)
       res
         .status(400)
-        .json(
-          'ce numéro et/ou cet email sont déja utilisés pour un autre compte'
-        )
+        .json('Ce numéro est déja utilisé par un autre utilisateur')
       res.end
     } else {
       bcrypt.hash(req.body.password, 10).then((hashedPassword) => {
