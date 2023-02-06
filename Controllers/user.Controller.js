@@ -34,7 +34,7 @@ const signUp = (req, res) => {
             const token = jwt.encode(playload, config.jwtSecret)
             delete user.password
             res.status(200).json({
-              userId: user,
+              userId: user._id,
               token: `Bearer ${token}`,
             })
           })
@@ -53,7 +53,8 @@ const logIn = (req, res) => {
   })
     .then((user) => {
       if (!user) {
-        res.status(401).json('email ou numéro incorect')
+        console.log(user)
+        res.status(401).json('aucun compte lié a ce numero')
       } else {
         const playload = {
           id: user.id,
@@ -70,7 +71,7 @@ const logIn = (req, res) => {
             else {
               delete user.password
               res.status(200).json({
-                userId: user.id,
+                userId: user._id,
                 token: `Bearer ${token}`,
               })
             }
@@ -80,4 +81,14 @@ const logIn = (req, res) => {
     .catch((err) => res.status(403).json(err))
 }
 
-module.exports = { logIn, signUp }
+const getUser = async (req, res) => {
+  await User.find({ _id: req.params.id })
+    .then((user) => {
+      res.status(200).json(user)
+    })
+    .catch((err) => {
+      res.status(401).json(err.message)
+    })
+}
+
+module.exports = { logIn, signUp, getUser }
