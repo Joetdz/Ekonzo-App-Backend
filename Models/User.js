@@ -11,13 +11,11 @@ const challengesSchema = new Schema(
       type: String,
     },
 
-    nombre_increment: {
-      type: String,
-    },
     montant_depart: {
       type: Number,
     },
-    longueur: {
+
+    progression: {
       type: Number,
     },
     image: {
@@ -44,14 +42,14 @@ const CagnottesSchema = new Schema(
     target: {
       type: Number,
     },
-    progression: {
+    progress: {
       type: Number,
     },
 
     image: {
       type: String,
     },
-    prix: {
+    montant_depart: {
       type: Number,
     },
     status: {
@@ -76,10 +74,10 @@ const userSchema = new Schema(
     email: {
       type: String,
     },
-    epargnes: {
-      challenge: [challengesSchema],
-      cagnotte: [CagnottesSchema],
-    },
+
+    challenge: [challengesSchema],
+    cagnotte: [CagnottesSchema],
+
     password: { type: String },
     profil: { type: String },
     promoCode: { type: String },

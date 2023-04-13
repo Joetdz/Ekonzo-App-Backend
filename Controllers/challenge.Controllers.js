@@ -1,5 +1,6 @@
 const axios = require('axios')
 const { Challenges } = require('../Models/Challenge')
+const { User } = require('../Models/User')
 
 const createChallenge = (req, res) => {
   Challenges.findOne({ nom: req.body.nom }).then((challenge) => {
@@ -70,7 +71,7 @@ const buyChallengeCard = async (req, res) => {
     gatewayMode: 1, // required, 0 : SandBox 1 : Live
     publicApiKey: `${process.env.MAISHAPAY_PUBLICKEY}`, // required,
     secretApiKey: `${process.env.MAISHAPAY_SECRETKEY}`, // required
-    transactionReference: 'AdfdfdfBCD', // required
+    transactionReference: 'FFFfhhoiggjuuiogsgeeefBCjkjD', // required
     amount: req.body.prix, // required
     currency: req.body.devise, // required USD, CDF, FCFA, EURO
     customerFullName: req.body.client, // nullable
@@ -84,15 +85,48 @@ const buyChallengeCard = async (req, res) => {
 
   await axios({
     method: 'post',
-    url: 'https://marchand.maishapay.online/api/payment/rest/vers1.0/merchant',
+    url: `${process.env.MAISHAPAY_URL}`,
     data: data,
   })
-    .then((res) => console.log(res))
-    .catch((err) => console.error(err.data))
+    .then((res) => {
+      if (res.status === 202) {
+        User.updateOne(
+          { _id: req.body.id },
+          { $push: { challenge: req.body.challenge } }
+        ).then((user) => {
+          console.log('user', user)
+        })
+      }
+
+      console.log('res', res.status)
+    })
+    .catch((err) => {
+      console.error('eer', err)
+    })
 }
+const depositChallengeCard = (req, res) => {
+  User.updateOne(
+    { _id: '6437d0fce651d6e38316f693' },
+    {
+      $set: {
+        ['challenge.' + req.body.index]: {
+          nom: 'piyo',
+          image: 'piyo.png',
+          prix: 1,
+
+          status: req.body.status,
+        },
+      },
+    }
+  )
+    .then((res) => console.log('userz ', res))
+    .catch((err) => console.log('uuurs', err))
+}
+
 module.exports = {
   createChallenge,
   getChallenges,
   getChallenge,
   buyChallengeCard,
+  depositChallengeCard,
 }
