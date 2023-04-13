@@ -1,3 +1,4 @@
+const axios = require('axios')
 const { Challenges } = require('../Models/Challenge')
 
 const createChallenge = (req, res) => {
@@ -64,5 +65,34 @@ const getChallenge = (req, res) => {
     })
 }
 
-const buyChallengeCard = (req, res) => {}
-module.exports = { createChallenge, getChallenges, getChallenge }
+const buyChallengeCard = async (req, res) => {
+  const data = {
+    gatewayMode: 1, // required, 0 : SandBox 1 : Live
+    publicApiKey: `${process.env.MAISHAPAY_PUBLICKEY}`, // required,
+    secretApiKey: `${process.env.MAISHAPAY_SECRETKEY}`, // required
+    transactionReference: 'AdfdfdfBCD', // required
+    amount: req.body.prix, // required
+    currency: req.body.devise, // required USD, CDF, FCFA, EURO
+    customerFullName: req.body.client, // nullable
+    customerPhoneNumber: '', // nullable
+    customerEmailAddress: null, // nullable
+    chanel: 'MOBILEMONEY', // required MOBILEMONEY
+    provider: req.body.operateur, // reqyuired MPESA, ORANGE, AITEL, AFRICEL, MTN
+    walletID: req.body.numero, // required
+  }
+  console.log('data', data)
+
+  await axios({
+    method: 'post',
+    url: 'https://marchand.maishapay.online/api/payment/rest/vers1.0/merchant',
+    data: data,
+  })
+    .then((res) => console.log(res))
+    .catch((err) => console.error(err.data))
+}
+module.exports = {
+  createChallenge,
+  getChallenges,
+  getChallenge,
+  buyChallengeCard,
+}
