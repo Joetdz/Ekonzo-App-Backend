@@ -1,6 +1,6 @@
 const { Challenges } = require('../Models/Challenge')
 
-const createChallenge = (res, req) => {
+const createChallenge = (req, res) => {
   Challenges.findOne({ nom: req.body.nom }).then((challenge) => {
     if (challenge) {
       res
@@ -34,13 +34,12 @@ const createChallenge = (res, req) => {
   })
 }
 
-const getChallenges = (res, req) => {
+const getChallenges = (req, res) => {
   Challenges.find()
     .then((challenges) => {
       if (challenges) {
-        res.status(200).json({
-          data: challenges,
-        })
+        res.status(200).json({ challenges })
+        res.send('Hello from the backend')
       } else {
         res.status(404).json({
           messages: "Aucun chanllenge n'est disponible",
@@ -55,7 +54,7 @@ const getChallenges = (res, req) => {
     })
 }
 
-const getChallenge = (res, req) => {
+const getChallenge = (req, res) => {
   Challenges.findone({ _id: req.params.id })
     .then((challenge) => {
       res.status(200).json({ challenge })
@@ -64,4 +63,6 @@ const getChallenge = (res, req) => {
       res.status(403).json({ err })
     })
 }
+
+const buyChallengeCard = (req, res) => {}
 module.exports = { createChallenge, getChallenges, getChallenge }

@@ -12,23 +12,15 @@ const challengesSchema = new Schema(
       type: String,
       required: true,
     },
-    complexite: {
-      name: {
-        type: String,
-        required: true,
-      },
-      nombre: {
-        type: Number,
-        required: true,
-      },
-    },
-    longueur: {
+
+    target: {
       type: Number,
       required: true,
     },
+
     image: {
       type: String,
-      required: true,
+      required: false,
     },
     prix: {
       type: Number,

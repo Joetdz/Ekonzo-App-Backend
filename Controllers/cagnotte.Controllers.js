@@ -34,31 +34,30 @@ const createCagnotte = (res, req) => {
   })
 }
 
-const getCagnottes = (res, req) => {
+const getCagnottes = (req, res) => {
   Cagnottes.find()
     .then((Cagnottes) => {
       if (Cagnottes) {
-        res.status(200).json({
-          data: Cagnottes,
-        })
+        res.status(200).json({ Cagnottes })
+        res.send('Hello from the backend')
       } else {
         res.status(404).json({
-          messages: "Aucun Cagnottes n'est disponible",
+          messages: "Aucuns   Cagnottes n'est disponible",
         })
       }
     })
     .catch((err) => {
       console.log(err)
-      res.status(403).json({
-        err,
-      })
+      // res.status(403).json({
+      //   err,
+      // })
     })
 }
 
 const getCagnotte = (res, req) => {
   Cagnottes.findone({ _id: req.params.id })
     .then((Cagnotte) => {
-      res.status(200).json({ Cagnotte })
+      // res.status(200).json({ Cagnotte })
     })
     .catch((err) => {
       res.status(403).json({ err })
