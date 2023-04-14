@@ -13,7 +13,10 @@
     "main": "App.js"
   },
   "lint-staged": {
-    "**/*.{js}": []
+    "**/*.{js}": [
+      "npm run lint",
+      "prettier --write"
+    ]
   },
   "repository": {
     "type": "git",
@@ -34,11 +37,12 @@
     "jwt-simple": "^0.5.6",
     "mongoose": "^6.7.5",
     "mongoose-unique-validator": "^3.1.0",
-    "nodemon": "^2.0.20"
+    "nodemon": "^2.0.20",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "husky": "^8.0.0",
-    "lint-staged": "^13.1.0",
+    "lint-staged": "^13.2.1",
     "prettier": "^2.8.3"
   }
 }

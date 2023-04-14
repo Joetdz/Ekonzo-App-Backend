@@ -18,10 +18,16 @@ const challengesSchema = new Schema(
     progression: {
       type: Number,
     },
+    target: {
+      type: Number,
+    },
     image: {
       type: String,
     },
     prix: {
+      type: Number,
+    },
+    solde: {
       type: Number,
     },
     status: {

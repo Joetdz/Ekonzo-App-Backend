@@ -1,7 +1,7 @@
 const axios = require('axios')
 const { Challenges } = require('../Models/Challenge')
 const { User } = require('../Models/User')
-
+const uuid = require('uuid')
 const createChallenge = (req, res) => {
   Challenges.findOne({ nom: req.body.nom }).then((challenge) => {
     if (challenge) {
@@ -67,11 +67,12 @@ const getChallenge = (req, res) => {
 }
 
 const buyChallengeCard = async (req, res) => {
+  const ref = uuid.v4()
   const data = {
     gatewayMode: 1, // required, 0 : SandBox 1 : Live
     publicApiKey: `${process.env.MAISHAPAY_PUBLICKEY}`, // required,
     secretApiKey: `${process.env.MAISHAPAY_SECRETKEY}`, // required
-    transactionReference: 'FFFfhhoiggjuuiogsgeeefBCjkjD', // required
+    transactionReference: ref, // required
     amount: req.body.prix, // required
     currency: req.body.devise, // required USD, CDF, FCFA, EURO
     customerFullName: req.body.client, // nullable
@@ -104,23 +105,74 @@ const buyChallengeCard = async (req, res) => {
       console.error('eer', err)
     })
 }
-const depositChallengeCard = (req, res) => {
-  User.updateOne(
-    { _id: '6437d0fce651d6e38316f693' },
-    {
-      $set: {
-        ['challenge.' + req.body.index]: {
-          nom: 'piyo',
-          image: 'piyo.png',
-          prix: 1,
+const depositChallengeCard = async (req, res) => {
+  await User.findOne({ _id: req.body.id }).then((user) => {
+    if (user) {
+      const startAmount = user.challenge[req.body.index].montant_depart
+      const progress = user.challenge[req.body.index].progression
+      const target = user.challenge[req.body.index].target
+      const sold = user.challenge[req.body.index].solde
+      const depositAmount = startAmount * progress
 
-          status: req.body.status,
-        },
-      },
+      if ((progress) => target) {
+        const ref = uuid.v4()
+        const data = {
+          gatewayMode: 1, // required, 0 : SandBox 1 : Live
+          publicApiKey: `${process.env.MAISHAPAY_PUBLICKEY}`, // required,
+          secretApiKey: `${process.env.MAISHAPAY_SECRETKEY}`, // required
+          transactionReference: ref, // required
+          amount: depositAmount, // required
+          currency: req.body.devise, // required USD, CDF, FCFA, EURO
+          customerFullName: req.body.client, // nullable
+          customerPhoneNumber: '', // nullable
+          customerEmailAddress: null, // nullable
+          chanel: 'MOBILEMONEY', // required MOBILEMONEY
+          provider: req.body.operateur, // reqyuired MPESA, ORANGE, AITEL, AFRICEL, MTN
+          walletID: req.body.numero, // required
+        }
+        console.log('depot data', data.data)
+        axios({
+          method: 'post',
+          url: `${process.env.MAISHAPAY_URL}`,
+          data: data,
+        })
+          .then((res) => {
+            if (res.status === 202) {
+              User.updateOne(
+                { _id: req.body.id },
+                {
+                  $set: {
+                    ['challenge.' + req.body.index]: {
+                      image: 'piyo.png',
+                      nom: 'piyo',
+                      prix: 1,
+                      target: 25,
+                      progression: progress + 1,
+                      montant_depart: 1,
+                      solde: sold + depositAmount,
+
+                      status: 'active',
+                    },
+                  },
+                }
+              )
+                .then((res) => console.log('userz ajour ', res))
+                .catch((err) => console.log('uuurs ajour', err))
+            }
+
+            console.log('res', res)
+          })
+          .catch((err) => {
+            console.error('', err)
+          })
+      } else {
+        console.log('félicitation , vous avez terrminer le challenge')
+      }
+
+      const nextStep = user
     }
-  )
-    .then((res) => console.log('userz ', res))
-    .catch((err) => console.log('uuurs', err))
+    console.log('user', user.challenge[req.body.index])
+  })
 }
 
 module.exports = {
