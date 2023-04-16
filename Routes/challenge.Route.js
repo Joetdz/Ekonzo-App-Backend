@@ -1,4 +1,5 @@
 const express = require('express')
+const auth = require('../Middlewares/auth')
 const {
   getChallenges,
   getChallenge,
@@ -9,10 +10,9 @@ const {
 
 const router = express.Router()
 
-router.post('/create', createChallenge)
-router.post('/buy', buyChallengeCard)
-router.post('/deposit', depositChallengeCard)
-router.get('/all', getChallenges)
-router.get('/:id', getChallenge)
+router.post('/create',auth, createChallenge)
+router.post('/buy' ,auth, buyChallengeCard)
+router.post('/deposit',auth, depositChallengeCard)
+router.get('/all',auth, getChallenges)
 
 module.exports = router

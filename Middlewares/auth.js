@@ -10,6 +10,7 @@ module.exports = (req, res, next) => {
       userId: userId,
     }
     next()
+    res.end
     console.log(req.auth)
   } catch (err) {
     res.status(401).json({ message: 'Token invalide', error: err })

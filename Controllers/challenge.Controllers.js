@@ -41,7 +41,8 @@ const getChallenges = (req, res) => {
     .then((challenges) => {
       if (challenges) {
         res.status(200).json({ challenges })
-        res.send('Hello from the backend')
+        
+        res.end()
       } else {
         res.status(404).json({
           messages: "Aucun chanllenge n'est disponible",
