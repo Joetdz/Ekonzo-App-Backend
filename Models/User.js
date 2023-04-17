@@ -1,6 +1,69 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 const uniqueValidator = require('mongoose-unique-validator')
+const challengesSchema = new Schema(
+  {
+    nom: {
+      type: String,
+      required: true,
+    },
+    description: {
+      type: String,
+    },
+
+    montant_depart: {
+      type: Number,
+    },
+
+    progression: {
+      type: Number,
+    },
+    target: {
+      type: Number,
+    },
+    image: {
+      type: String,
+    },
+    prix: {
+      type: Number,
+    },
+    solde: {
+      type: Number,
+    },
+    status: {
+      type: String,
+    },
+  },
+  { timestamps: true }
+)
+
+const CagnottesSchema = new Schema(
+  {
+    nom: {
+      type: String,
+    },
+    description: {
+      type: String,
+    },
+    target: {
+      type: Number,
+    },
+    progress: {
+      type: Number,
+    },
+
+    image: {
+      type: String,
+    },
+    montant_depart: {
+      type: Number,
+    },
+    status: {
+      type: String,
+    },
+  },
+  { timestamps: true }
+)
 
 const userSchema = new Schema(
   {
@@ -12,14 +75,18 @@ const userSchema = new Schema(
     },
 
     tel: {
-      type: String,
+      type: Number,
     },
     email: {
       type: String,
     },
-    password: String,
-    profil: String,
-    promoCode: String,
+
+    challenge: [challengesSchema],
+    cagnotte: [CagnottesSchema],
+
+    password: { type: String },
+    profil: { type: String },
+    promoCode: { type: String },
   },
 
   { timestamps: true }

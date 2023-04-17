@@ -52,7 +52,7 @@ const logIn = (req, res) => {
     .then((user) => {
       if (!user) {
         console.log(user)
-        res.status(401).json('aucun compte lié a ce numero')
+        res.status(401).json('Aucun compte lié a ce numero')
       } else {
         const playload = {
           id: user.id,

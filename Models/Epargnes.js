@@ -5,8 +5,6 @@ const uniqueValidator = require('mongoose-unique-validator')
 const EpargneShema = new Schema(
   {
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-    mode: String,
-    type,
   },
   { timestamps: true }
 )
