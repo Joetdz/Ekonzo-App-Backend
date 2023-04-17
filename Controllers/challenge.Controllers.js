@@ -81,7 +81,7 @@ const buyChallengeCard = async (req, res) => {
     customerEmailAddress: null, // nullable
     chanel: 'MOBILEMONEY', // required MOBILEMONEY
     provider: req.body.operateur, // reqyuired MPESA, ORANGE, AITEL, AFRICEL, MTN
-    walletID: req.body.numero, // required
+    walletID: "243"+req.body.numero, // required
   }
   console.log('data', data)
 
@@ -94,13 +94,18 @@ const buyChallengeCard = async (req, res) => {
       if (res.status === 202) {
         User.updateOne(
           { _id: req.body.id },
-          { $push: { challenge: req.body.challenge } }
+          { $push: { challenge: {nom:req.body.challenge.nom,
+             image:req.body.challenge.image, devise:req.body.challenge.devise, 
+             prix:req.body.challenge.prix, target:req.body.challenge.target,
+             montant_depart:req.body.challenge.montant_depart, 
+             progression:1, solde:0} } }
+
         ).then((user) => {
           console.log('user', user)
         })
       }
 
-      console.log('res', res.status)
+      console.log('res', res)
     })
     .catch((err) => {
       console.error('eer', err)
@@ -129,7 +134,7 @@ const depositChallengeCard = async (req, res) => {
           customerEmailAddress: null, // nullable
           chanel: 'MOBILEMONEY', // required MOBILEMONEY
           provider: req.body.operateur, // reqyuired MPESA, ORANGE, AITEL, AFRICEL, MTN
-          walletID: req.body.numero, // required
+          walletID:"243" +req.body.numero, // required
         }
         console.log('depot data', data.data)
         axios({
