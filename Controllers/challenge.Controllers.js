@@ -81,7 +81,7 @@ const buyChallengeCard = async (req, res) => {
     customerEmailAddress: null, // nullable
     chanel: 'MOBILEMONEY', // required MOBILEMONEY
     provider: req.body.operateur, // reqyuired MPESA, ORANGE, AITEL, AFRICEL, MTN
-    walletID: "243"+req.body.numero, // required
+    walletID:"243"+ req.body.numero, // required
   }
   console.log('data', data)
 
@@ -90,25 +90,26 @@ const buyChallengeCard = async (req, res) => {
     url: `${process.env.MAISHAPAY_URL}`,
     data: data,
   })
-    .then((res) => {
-      if (res.status === 202) {
+    .then((transaction) => {
+      if (transaction.status === 202) {
         User.updateOne(
           { _id: req.body.id },
-          { $push: { challenge: {nom:req.body.challenge.nom,
-             image:req.body.challenge.image, devise:req.body.challenge.devise, 
-             prix:req.body.challenge.prix, target:req.body.challenge.target,
-             montant_depart:req.body.challenge.montant_depart, 
-             progression:1, solde:0} } }
-
+          { $push: { challenge: req.body.challenge } }
         ).then((user) => {
+          res.status(200).json({
+            messages: "paiement effectué avec succès",
+          })
           console.log('user', user)
+          
         })
       }
 
-      console.log('res', res)
+      console.log('res', res.data)
     })
     .catch((err) => {
       console.error('eer', err)
+      res.status(403).json("Désolée Quelque chose s'est mal passé avec l'orperateur lors de l'achat de votre carte ! Vueilliez réessayer ")
+      res.end
     })
 }
 const depositChallengeCard = async (req, res) => {
@@ -120,7 +121,7 @@ const depositChallengeCard = async (req, res) => {
       const sold = user.challenge[req.body.index].solde
       const depositAmount = startAmount * progress
 
-      if ((progress) => target) {
+      if (progress => target) {
         const ref = uuid.v4()
         const data = {
           gatewayMode: 1, // required, 0 : SandBox 1 : Live
@@ -134,7 +135,7 @@ const depositChallengeCard = async (req, res) => {
           customerEmailAddress: null, // nullable
           chanel: 'MOBILEMONEY', // required MOBILEMONEY
           provider: req.body.operateur, // reqyuired MPESA, ORANGE, AITEL, AFRICEL, MTN
-          walletID:"243" +req.body.numero, // required
+          walletID: req.body.numero, // required
         }
         console.log('depot data', data.data)
         axios({
