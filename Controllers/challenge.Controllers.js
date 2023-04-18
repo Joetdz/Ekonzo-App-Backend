@@ -2,8 +2,8 @@ const axios = require('axios')
 const { Challenges } = require('../Models/Challenge')
 const { User } = require('../Models/User')
 const uuid = require('uuid')
-const createChallenge = (req, res) => {
-  Challenges.findOne({ nom: req.body.nom }).then((challenge) => {
+const createChallenge = async(req, res) => {
+  await Challenges.findOne({ nom: req.body.nom }).then((challenge) => {
     if (challenge) {
       res
         .status(401)
@@ -36,7 +36,7 @@ const createChallenge = (req, res) => {
   })
 }
 
-const getChallenges = (req, res) => {
+const getChallenges = async(req, res) => {
   Challenges.find()
     .then((challenges) => {
       if (challenges) {
@@ -57,8 +57,8 @@ const getChallenges = (req, res) => {
     })
 }
 
-const getChallenge = (req, res) => {
-  Challenges.findone({ _id: req.params.id })
+const getChallenge = async (req, res) => {
+ await Challenges.findone({ _id: req.params.id })
     .then((challenge) => {
       res.status(200).json({ challenge })
     })
@@ -94,7 +94,7 @@ const buyChallengeCard = async (req, res) => {
       if (transaction.status === 202) {
         User.updateOne(
           { _id: req.body.id },
-          { $push: { challenge: req.body.challenge } }
+          { $push: { challenge: req.body } }
         ).then((user) => {
           res.status(200).json({
             messages: "paiement effectué avec succès",
@@ -135,7 +135,7 @@ const depositChallengeCard = async (req, res) => {
           customerEmailAddress: null, // nullable
           chanel: 'MOBILEMONEY', // required MOBILEMONEY
           provider: req.body.operateur, // reqyuired MPESA, ORANGE, AITEL, AFRICEL, MTN
-          walletID: req.body.numero, // required
+          walletID:"243"+ req.body.numero, // required
         }
         console.log('depot data', data.data)
         axios({
@@ -182,10 +182,28 @@ const depositChallengeCard = async (req, res) => {
   })
 }
 
+const getUserChallengeCards= async (req,res)=>{
+  await User.findOne({ _id: req.params.id }).then((user)=>{
+    console.log("card", req.pams.id)
+    if(user){
+      res.status(200).json({
+        challenges:user.challenge
+      })
+    }else{
+      console.log(user, 'dddssre')
+     res.status(404).json("Aucun utilisateur trouvé")
+    }
+   
+  }).catch((err) => {
+    res.status(403).json({ err })
+  })
+}
+
 module.exports = {
   createChallenge,
   getChallenges,
   getChallenge,
   buyChallengeCard,
   depositChallengeCard,
+  getUserChallengeCards
 }
