@@ -123,7 +123,7 @@ const buyChallengeCard = async (req, res) => {
       res
         .status(403)
         .json(
-          "Désolée Quelque chose s'est mal passé avec l'orperateur lors de l'achat de votre carte ! Vueilliez réessayer "
+          "Désolé quelque chose s'est mal passé avec l'operateur lors de l'achat de votre carte ! Vueilliez réessayer "
         )
       res.end
     })
@@ -135,6 +135,10 @@ const depositChallengeCard = async (req, res) => {
       const progress = user.challenge[req.body.index].progression
       const target = user.challenge[req.body.index].target
       const sold = user.challenge[req.body.index].solde
+      const nom = user.challenge[req.body.index].nom
+      const image = user.challenge[req.body.index].image
+      const prix = user.challenge[req.body.index].prix
+
       const depositAmount = startAmount * progress
 
       if ((progress) => target) {
@@ -159,34 +163,44 @@ const depositChallengeCard = async (req, res) => {
           url: `${process.env.MAISHAPAY_URL}`,
           data: data,
         })
-          .then((res) => {
-            if (res.status === 202) {
+          .then((transaction) => {
+            if (transaction.status === 202) {
               User.updateOne(
                 { _id: req.body.id },
                 {
                   $set: {
                     ['challenge.' + req.body.index]: {
-                      image: 'piyo.png',
-                      nom: 'piyo',
-                      prix: 1,
-                      target: 25,
+                      image: image,
+                      nom: nom,
+                      prix: prix,
+                      target: target,
                       progression: progress + 1,
-                      montant_depart: 1,
                       solde: sold + depositAmount,
+                      montant_depart: startAmount,
 
                       status: 'active',
                     },
                   },
                 }
               )
-                .then((res) => console.log('userz ajour ', res))
-                .catch((err) => console.log('uuurs ajour', err))
+                .then((data) => {
+                  console.log('userz ajour ', data)
+                  res.status(200).json({
+                    messages: 'paiement effectué avec succès',
+                  })
+                  res.end
+                })
+                .catch((err) => {
+                  
+                  console.log('uuurs ajour', err.data)
+                })
             }
 
             console.log('res', res)
           })
           .catch((err) => {
-            console.error('', err)
+            console.error('', err.data)
+            res.status(403).json('Vueilliez réessayer ')
           })
       } else {
         console.log('félicitation , vous avez terrminer le challenge')
