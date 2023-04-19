@@ -2,7 +2,7 @@ const axios = require('axios')
 const { Challenges } = require('../Models/Challenge')
 const { User } = require('../Models/User')
 const uuid = require('uuid')
-const createChallenge = async(req, res) => {
+const createChallenge = async (req, res) => {
   await Challenges.findOne({ nom: req.body.nom }).then((challenge) => {
     if (challenge) {
       res
@@ -36,12 +36,12 @@ const createChallenge = async(req, res) => {
   })
 }
 
-const getChallenges = async(req, res) => {
+const getChallenges = async (req, res) => {
   Challenges.find()
     .then((challenges) => {
       if (challenges) {
         res.status(200).json({ challenges })
-        
+
         res.end()
       } else {
         res.status(404).json({
@@ -58,7 +58,7 @@ const getChallenges = async(req, res) => {
 }
 
 const getChallenge = async (req, res) => {
- await Challenges.findone({ _id: req.params.id })
+  await Challenges.findone({ _id: req.params.id })
     .then((challenge) => {
       res.status(200).json({ challenge })
     })
@@ -81,7 +81,7 @@ const buyChallengeCard = async (req, res) => {
     customerEmailAddress: null, // nullable
     chanel: 'MOBILEMONEY', // required MOBILEMONEY
     provider: req.body.operateur, // reqyuired MPESA, ORANGE, AITEL, AFRICEL, MTN
-    walletID:"243"+ req.body.numero, // required
+    walletID: '243' + req.body.numero, // required
   }
   console.log('data', data)
 
@@ -94,13 +94,25 @@ const buyChallengeCard = async (req, res) => {
       if (transaction.status === 202) {
         User.updateOne(
           { _id: req.body.id },
-          { $push: { challenge: req.body } }
+          {
+            $push: {
+              challenge: {
+                nom: req.body.nom,
+                image: req.body.image,
+                devise: req.body.devise,
+                prix: req.body.prix,
+                target: req.body.target,
+                montant_depart: req.body.montant_depart,
+                progression: 1,
+                solde: 0,
+              },
+            },
+          }
         ).then((user) => {
           res.status(200).json({
-            messages: "paiement effectué avec succès",
+            messages: 'paiement effectué avec succès',
           })
           console.log('user', user)
-          
         })
       }
 
@@ -108,7 +120,11 @@ const buyChallengeCard = async (req, res) => {
     })
     .catch((err) => {
       console.error('eer', err)
-      res.status(403).json("Désolée Quelque chose s'est mal passé avec l'orperateur lors de l'achat de votre carte ! Vueilliez réessayer ")
+      res
+        .status(403)
+        .json(
+          "Désolée Quelque chose s'est mal passé avec l'orperateur lors de l'achat de votre carte ! Vueilliez réessayer "
+        )
       res.end
     })
 }
@@ -121,7 +137,7 @@ const depositChallengeCard = async (req, res) => {
       const sold = user.challenge[req.body.index].solde
       const depositAmount = startAmount * progress
 
-      if (progress => target) {
+      if ((progress) => target) {
         const ref = uuid.v4()
         const data = {
           gatewayMode: 1, // required, 0 : SandBox 1 : Live
@@ -130,12 +146,12 @@ const depositChallengeCard = async (req, res) => {
           transactionReference: ref, // required
           amount: depositAmount, // required
           currency: req.body.devise, // required USD, CDF, FCFA, EURO
-          customerFullName: req.body.client, // nullable
+          customerFullName: '', // nullable
           customerPhoneNumber: '', // nullable
           customerEmailAddress: null, // nullable
           chanel: 'MOBILEMONEY', // required MOBILEMONEY
           provider: req.body.operateur, // reqyuired MPESA, ORANGE, AITEL, AFRICEL, MTN
-          walletID:"243"+ req.body.numero, // required
+          walletID: '243' + req.body.numero, // required
         }
         console.log('depot data', data.data)
         axios({
@@ -182,21 +198,17 @@ const depositChallengeCard = async (req, res) => {
   })
 }
 
-const getUserChallengeCards= async (req,res)=>{
-  await User.findOne({ _id: req.params.id }).then((user)=>{
-    console.log("card", req.pams.id)
-    if(user){
-      res.status(200).json({
-        challenges:user.challenge
-      })
-    }else{
-      console.log(user, 'dddssre')
-     res.status(404).json("Aucun utilisateur trouvé")
+const getUserChallengeCards = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id)
+    if (user) {
+      res.status(200).json({ challenges: user.challenge })
+    } else {
+      res.status(404).json('Aucun utilisateur trouvé')
     }
-   
-  }).catch((err) => {
+  } catch (err) {
     res.status(403).json({ err })
-  })
+  }
 }
 
 module.exports = {
@@ -205,5 +217,5 @@ module.exports = {
   getChallenge,
   buyChallengeCard,
   depositChallengeCard,
-  getUserChallengeCards
+  getUserChallengeCards,
 }
