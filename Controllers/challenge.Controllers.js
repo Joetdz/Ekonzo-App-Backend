@@ -2,8 +2,8 @@ const axios = require('axios')
 const { Challenges } = require('../Models/Challenge')
 const { User } = require('../Models/User')
 const uuid = require('uuid')
-const createChallenge = (req, res) => {
-  Challenges.findOne({ nom: req.body.nom }).then((challenge) => {
+const createChallenge = async (req, res) => {
+  await Challenges.findOne({ nom: req.body.nom }).then((challenge) => {
     if (challenge) {
       res
         .status(401)
@@ -36,12 +36,13 @@ const createChallenge = (req, res) => {
   })
 }
 
-const getChallenges = (req, res) => {
+const getChallenges = async (req, res) => {
   Challenges.find()
     .then((challenges) => {
       if (challenges) {
         res.status(200).json({ challenges })
-        res.send('Hello from the backend')
+
+        res.end()
       } else {
         res.status(404).json({
           messages: "Aucun chanllenge n'est disponible",
@@ -56,8 +57,8 @@ const getChallenges = (req, res) => {
     })
 }
 
-const getChallenge = (req, res) => {
-  Challenges.findone({ _id: req.params.id })
+const getChallenge = async (req, res) => {
+  await Challenges.findone({ _id: req.params.id })
     .then((challenge) => {
       res.status(200).json({ challenge })
     })
@@ -80,7 +81,7 @@ const buyChallengeCard = async (req, res) => {
     customerEmailAddress: null, // nullable
     chanel: 'MOBILEMONEY', // required MOBILEMONEY
     provider: req.body.operateur, // reqyuired MPESA, ORANGE, AITEL, AFRICEL, MTN
-    walletID: req.body.numero, // required
+    walletID: '243' + req.body.numero, // required
   }
   console.log('data', data)
 
@@ -89,20 +90,42 @@ const buyChallengeCard = async (req, res) => {
     url: `${process.env.MAISHAPAY_URL}`,
     data: data,
   })
-    .then((res) => {
-      if (res.status === 202) {
+    .then((transaction) => {
+      if (transaction.status === 202) {
         User.updateOne(
           { _id: req.body.id },
-          { $push: { challenge: req.body.challenge } }
+          {
+            $push: {
+              challenge: {
+                nom: req.body.nom,
+                image: req.body.image,
+                devise: req.body.devise,
+                prix: req.body.prix,
+                target: req.body.target,
+                montant_depart: req.body.montant_depart,
+                progression: 1,
+                solde: 0,
+              },
+            },
+          }
         ).then((user) => {
+          res.status(200).json({
+            messages: 'paiement effectué avec succès',
+          })
           console.log('user', user)
         })
       }
 
-      console.log('res', res.status)
+      console.log('res', res.data)
     })
     .catch((err) => {
       console.error('eer', err)
+      res
+        .status(403)
+        .json(
+          "Désolée Quelque chose s'est mal passé avec l'orperateur lors de l'achat de votre carte ! Vueilliez réessayer "
+        )
+      res.end
     })
 }
 const depositChallengeCard = async (req, res) => {
@@ -123,12 +146,12 @@ const depositChallengeCard = async (req, res) => {
           transactionReference: ref, // required
           amount: depositAmount, // required
           currency: req.body.devise, // required USD, CDF, FCFA, EURO
-          customerFullName: req.body.client, // nullable
+          customerFullName: '', // nullable
           customerPhoneNumber: '', // nullable
           customerEmailAddress: null, // nullable
           chanel: 'MOBILEMONEY', // required MOBILEMONEY
           provider: req.body.operateur, // reqyuired MPESA, ORANGE, AITEL, AFRICEL, MTN
-          walletID: req.body.numero, // required
+          walletID: '243' + req.body.numero, // required
         }
         console.log('depot data', data.data)
         axios({
@@ -175,10 +198,24 @@ const depositChallengeCard = async (req, res) => {
   })
 }
 
+const getUserChallengeCards = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id)
+    if (user) {
+      res.status(200).json({ challenges: user.challenge })
+    } else {
+      res.status(404).json('Aucun utilisateur trouvé')
+    }
+  } catch (err) {
+    res.status(403).json({ err })
+  }
+}
+
 module.exports = {
   createChallenge,
   getChallenges,
   getChallenge,
   buyChallengeCard,
   depositChallengeCard,
+  getUserChallengeCards,
 }
